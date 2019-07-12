@@ -30,7 +30,7 @@ module.exports = {
 				reason = reason + " " + args[i];
 			}
 			if (isNaN(duration) || durationobject === null) {
-				message.reply('duración incorrecta. El formato de la duración es <número><h/d/m> (horas, días y meses, respectivamente)')
+				message.reply('duración incorrecta. El formato de la duración es <número><m/h/d> (minutos, horas y días, respectivamente)')
 			} else if (duration < 1 || (durationtype === 'm' && duration < 2)) {
 				message.reply('por favor ingresá un valor mayor a **un minuto**.')
 			} else {
