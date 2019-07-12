@@ -1,0 +1,17 @@
+{
+  "name": "mmbansbot",
+  "version": "1.0.0",
+  "description": "Manages matchmaking bans in the IOSoccer Sudamérica Discord server.",
+  "main": "index.js",
+  "bin": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "allavaz",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "luxon": "^1.16.1",
+    "mongodb": "^3.2.7"
+  }
+}
