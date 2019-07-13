@@ -26,7 +26,8 @@ module.exports = async function(message, member) {
 			.setThumbnail(member.user.displayAvatarURL)
 		if (banlistitem.isBanned) {
 			let banlogitem = await db.collection('banlog').findOne({playerid: memberid}, {sort: {startdate: -1}})
-			baninforembed.addField('Fecha de inicio:', DateTime.fromISO(banlogitem.startdate).toFormat("dd'/'LL'/'yyyy HH':'mm"));
+			baninforembed.addField('Fecha de inicio:', DateTime.fromISO(banlogitem.startdate).toFormat("dd'/'LL'/'yyyy HH':'mm"))
+				.addField('Motivo:', banlogitem.reason);
 			if (banlogitem.enddate !== null) {
 				const start = DateTime.fromISO(banlogitem.startdate);
 				const end = DateTime.fromISO(banlogitem.enddate);
