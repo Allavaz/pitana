@@ -34,7 +34,7 @@ module.exports = async function(message, member, durationobject, reason){
 			}, 
 			{upsert: true, returnOriginal: false}
 		)
-		if (res.value.count < 7) {
+		if (res.value.count < 7 && durationobject !== 'perma') {
 			exec(`schtasks /Create /TN mmbans\\${memberid} /TR "node ${unbanpath} ${memberid}" /SD ${date.plus(durationobject).toFormat("LL'/'dd'/'yyyy")} /ST ${date.plus(durationobject).toFormat("HH':'mm")} /SC ONCE /F`);
 			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${date.plus({months: 2}).toFormat("LL'/'dd'/'yyyy")} /ST ${date.plus({months: 2}).toFormat("HH':'mm")} /SC ONCE /F`);
 		} else {
@@ -44,16 +44,16 @@ module.exports = async function(message, member, durationobject, reason){
 		await db.collection('banlog').insertOne({
 			playerid: memberid,
 			startdate: date.toISO(),
-			enddate: date.plus(durationobject).toISO(),
+			enddate: durationobject === 'perma' ? null : date.plus(durationobject).toISO(),
 			reason: reason
 		})
 		const banrembed = new Discord.RichEmbed()
-			.setTitle(`Usuario baneado por ${calculatetime(durationobject)}`)
+			.setTitle(`Usuario baneado ${durationobject === 'perma' ? '**indefinidamente**' : `por ${calculatetime(durationobject)}`}`)
 			.setColor('RED')
 			.setThumbnail(member.user.displayAvatarURL)
 			.addField('Nombre:', member)
 			.addField('Fecha de inicio:', date.toFormat("dd'/'LL'/'yyyy HH':'mm"))
-			.addField('Fecha de expiración:', date.plus(durationobject).toFormat("dd'/'LL'/'yyyy HH':'mm"))
+			.addField('Fecha de expiración:', durationobject === 'perma' ? 'Indefinida' : date.plus(durationobject).toFormat("dd'/'LL'/'yyyy HH':'mm"))
 			.addField('Motivo de ban:', reason)
 			.addField('Nivel de ban actual:', res.value.count)
 			.setFooter('Baneado por: ' + message.member.displayName, message.author.displayAvatarURL)
