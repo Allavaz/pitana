@@ -15,10 +15,10 @@ module.exports = {
                     message.reply('el usuario no se encuentra baneado.');
                 }
             } else {
-                message.reply("usuario desconocido. Recordá mencionarlo! Uso: " + config.prefix + "banremove <@usuario>")
+                message.reply(`usuario desconocido. Recordá mencionarlo! Uso: ${config.prefix}${this.name} ${this.usage}`)
             }
         } else {
-            message.reply("faltan argumentos. Uso: " + config.prefix + "banremove <@usuario>");
+            message.reply(`faltan argumentos. Uso: ${config.prefix}${this.name} ${this.usage}`);
         }
     }
 }

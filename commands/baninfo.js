@@ -11,7 +11,7 @@ module.exports = {
             if (member !== undefined) {
                 baninfo(message, member);
             } else {
-                message.reply("usuario desconocido. Recordá mencionarlo! Uso: " + config.prefix + "baninfo <@usuario>")
+                message.reply(`usuario desconocido. Recordá mencionarlo! Uso: ${prefix}${name} ${usage}`)
             }
         } else {
             baninfo(message, message.member);

@@ -19,10 +19,10 @@ module.exports = {
 					ban(message, member, reason);
 				}
 			} else {
-				message.reply("usuario desconocido. Recordá mencionarlo! Uso: " + config.prefix + "ban <@usuario> <motivo>")
+				message.reply(`usuario desconocido. Recordá mencionarlo! Uso: ${config.prefix}${this.name} ${this.usage}`);
 			}
 		} else {
-			message.reply("faltan argumentos. Uso: " + config.prefix + "ban <@usuario> <motivo>");
+			message.reply(`faltan argumentos. Uso: ${config.prefix}${this.name} ${this.usage}`);
 		}
 	}
 }
