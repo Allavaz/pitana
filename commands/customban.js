@@ -10,10 +10,11 @@ module.exports = {
 			let durationobject = null;
 			const member = message.mentions.members.first();
 			let duration = args[1];
+			let durationtype;
 			if (duration === 'perma') {
 				durationobject = duration;
 			} else {
-				let durationtype = duration.substring(duration.length-1, duration.length);
+				durationtype = duration.substring(duration.length-1, duration.length);
 				duration = parseInt(duration.substring(0, duration.length-1));
 				switch (durationtype) {
 					case 'm':
