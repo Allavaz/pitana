@@ -14,13 +14,11 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-	client.guilds.get(config.guildid).fetchMembers().then(() => {
-		console.log('Ready!');
+	console.log('Ready!');
 
-		for (let role of config.adminroles) {
-			client.adminroles.set(role, client.guilds.get(config.guildid).roles.get(role));
-		}
-	})
+	for (let role of config.adminroles) {
+		client.adminroles.set(role, client.guilds.get(config.guildid).roles.get(role));
+	}
 });
 
 client.on('message', message => {

@@ -7,12 +7,14 @@ module.exports = {
     usage: '<@usuario>',
     execute(message, args) {
         if (args.length > 0) {
-            let member = message.mentions.members.first();
-            if (member !== undefined) {
-                baninfo(message, member);
-            } else {
-                message.reply(`usuario desconocido. Recordá mencionarlo! Uso: ${config.prefix}${this.name} ${this.usage}`)
-            }
+			message.guild.fetchMembers().then(() => {
+                let member = message.mentions.members.first();
+                if (member !== undefined) {
+                    baninfo(message, member);
+                } else {
+                    message.reply(`usuario desconocido. Recordá mencionarlo! Uso: ${config.prefix}${this.name} ${this.usage}`)
+                }
+			})
         } else {
             baninfo(message, message.member);
         }
