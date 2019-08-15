@@ -47,7 +47,7 @@ module.exports = async function(message, member, reason){
 			reason: reason
 		});
 		const banrembed = new Discord.RichEmbed()
-			.setTitle(`Usuario baneado ${res.value.count < 7 ? `por ${config.bandays[res.value.count]} día${res.value.count > 3 ? 's' : ''}` : 'indefinidamente'}.`)
+			.setTitle(`Usuario baneado ${res.value.count < 7 ? `por ${config.bandays[res.value.count]} día${res.value.count > 2 ? 's' : ''}` : 'indefinidamente'}.`)
 			.setColor('RED')
 			.setThumbnail(member.user.displayAvatarURL)
 			.addField('Nombre:', member)
