@@ -16,7 +16,7 @@ module.exports = async function(message, member) {
 	const client = new MongoClient(url, {useNewUrlParser: true});
 
 	try {
-		msg.edit('Conectando a la base de datos...')
+		msg.edit('Conectando a la base de datos...');
 		let mongoclient = await client.connect();
 		const db = mongoclient.db(config.dbname);
 		msg.edit('Eliminando ban del historial...');
@@ -40,7 +40,7 @@ module.exports = async function(message, member) {
 		if (banlistitem.value.count === 0) {
 			exec(`schtasks /Delete /TN bansreset\\${memberid} /F`);
 		} else {
-            exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${DateTime.fromISO(lastbanlog.startdate).plus({months: 2}).toFormat("LL'/'dd'/'yyyy")} /ST ${DateTime.fromISO(lastbanlog.startdate).plus({months: 2}).toFormat("HH':'mm")} /SC ONCE /F`);
+			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${DateTime.fromISO(lastbanlog.startdate).plus({months: 2}).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${DateTime.fromISO(lastbanlog.startdate).plus({months: 2}).toFormat('HH\':\'mm')} /SC ONCE /F`);
 		}
 		const removebanrembed = new Discord.RichEmbed()
 			.setTitle('Ban removido')
@@ -48,11 +48,11 @@ module.exports = async function(message, member) {
 			.setThumbnail(member.user.displayAvatarURL)
 			.setDescription(`El ban de ${member} ha sido removido.`)
 			.addField('Nivel de ban actual:', banlistitem.value.count)
-			.setFooter(`Ban removido por: ${message.member.displayName}`, message.author.displayAvatarURL)
+			.setFooter(`Ban removido por: ${message.member.displayName}`, message.author.displayAvatarURL);
 		msg.delete();
 		message.channel.send(removebanrembed);
 	} catch(e) {
 		console.error(e);
 	}
-}
+};
 

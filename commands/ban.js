@@ -11,7 +11,7 @@ module.exports = {
 				let member = message.mentions.members.first();
 				let reason = args[1];
 				for (let i=2; i<args.length; i++) {
-					reason = reason + " " + args[i];
+					reason = reason + ' ' + args[i];
 				}
 				if (member !== undefined) {
 					if (member.roles.has(config.mmbanroleid)) {
@@ -22,9 +22,9 @@ module.exports = {
 				} else {
 					message.reply(`usuario desconocido. Recordá mencionarlo! Uso: ${config.prefix}${this.name} ${this.usage}`);
 				}
-			})
+			});
 		} else {
 			message.reply(`faltan argumentos. Uso: ${config.prefix}${this.name} ${this.usage}`);
 		}
 	}
-}
+};
