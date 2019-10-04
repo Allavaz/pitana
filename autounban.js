@@ -30,7 +30,7 @@ discordclient.once('ready', () => {
 				member.removeRole(config.mmbanroleid, 'Ban expirado')
 					.then(() => {
 						console.log('Eliminando tarea programada de desbaneo...');
-						exec(`schtasks /Delete /TN mmbans\\${memberid} /F`, (err, stdout, stderr) => {
+						exec(`schtasks /Delete /TN mmbans\\${memberid} /F`, (err) => {
 							if (err !== null) {
 								console.log(err);
 							}
@@ -38,13 +38,13 @@ discordclient.once('ready', () => {
 						channel.send(unbanrembed).then(() => {
 							discordclient.destroy()
 								.then(() => process.exit())
-								.catch((err) => console.error(err))
+								.catch((err) => console.error(err));
 						})
-						.catch((err) => console.error(err))
+							.catch((err) => console.error(err));
 					})
 					.catch((err) => console.error(err))
-			.catch((err) => console.error(err));
-		});
+					.catch((err) => console.error(err));
+			});
 	});
 }); 
 

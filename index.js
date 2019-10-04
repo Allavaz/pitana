@@ -37,10 +37,10 @@ client.on('message', message => {
 			.setTitle('Ayuda')
 			.setColor('BLUE')
 			.addField(`${config.prefix}help`, 'Muestra este mensaje.')
-			.setFooter('Hecho con ♥ por Allavaz.')
-		client.commands.map((item, index) => { 
+			.setFooter('Hecho con ♥ por Allavaz.');
+		client.commands.map((item) => { 
 			helprembed.addField(`${config.prefix + item.name} ${item.usage}`, item.description);
-		})
+		});
 		message.channel.send(helprembed);
 	}
 

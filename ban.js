@@ -21,7 +21,7 @@ module.exports = async function(message, member, reason){
 	const client = new MongoClient(url, {useNewUrlParser: true});
 
 	try {
-		msg.edit('Conectando con la base de datos...')
+		msg.edit('Conectando con la base de datos...');
 		let mongoclient = await client.connect();
 		const db = mongoclient.db(config.dbname);
 		msg.edit('Incrementando nivel de ban...');
@@ -34,8 +34,8 @@ module.exports = async function(message, member, reason){
 			{upsert: true, returnOriginal: false}
 		);
 		if (res.value.count < 7) {
-			exec(`schtasks /Create /TN mmbans\\${memberid} /TR "node ${unbanpath} ${memberid}" /SD ${date.plus({days: config.bandays[res.value.count]}).toFormat("LL'/'dd'/'yyyy")} /ST ${date.plus({days: config.bandays[res.value.count]}).toFormat("HH':'mm")} /SC ONCE /F`);
-			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${date.plus({months: 2}).toFormat("LL'/'dd'/'yyyy")} /ST ${date.plus({months: 2}).toFormat("HH':'mm")} /SC ONCE /F`);
+			exec(`schtasks /Create /TN mmbans\\${memberid} /TR "node ${unbanpath} ${memberid}" /SD ${date.plus({days: config.bandays[res.value.count]}).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${date.plus({days: config.bandays[res.value.count]}).toFormat('HH\':\'mm')} /SC ONCE /F`);
+			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${date.plus({months: 2}).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${date.plus({months: 2}).toFormat('HH\':\'mm')} /SC ONCE /F`);
 		} else {
 			exec(`schtasks /Delete /TN bansreset\\${memberid} /F`);
 		}
@@ -51,8 +51,8 @@ module.exports = async function(message, member, reason){
 			.setColor('RED')
 			.setThumbnail(member.user.displayAvatarURL)
 			.addField('Nombre:', member)
-			.addField('Fecha de inicio:', date.toFormat("dd'/'LL'/'yyyy HH':'mm"))
-			.addField('Fecha de expiración:', res.value.count < 7 ? date.plus({days: config.bandays[res.value.count]}).toFormat("dd'/'LL'/'yyyy HH':'mm") : 'Indefinido')
+			.addField('Fecha de inicio:', date.toFormat('dd\'/\'LL\'/\'yyyy HH\':\'mm'))
+			.addField('Fecha de expiración:', res.value.count < 7 ? date.plus({days: config.bandays[res.value.count]}).toFormat('dd\'/\'LL\'/\'yyyy HH\':\'mm') : 'Indefinido')
 			.addField('Motivo de ban:', reason)
 			.addField('Nivel de ban actual:', res.value.count)
 			.setFooter('Baneado por: ' + message.member.displayName, message.author.displayAvatarURL);
@@ -61,4 +61,4 @@ module.exports = async function(message, member, reason){
 	} catch(e) {
 		console.error(e);
 	}
-}
+};
