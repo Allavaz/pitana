@@ -35,7 +35,7 @@ module.exports = async function(message, member, reason){
 		);
 		if (res.value.count < 7) {
 			exec(`schtasks /Create /TN mmbans\\${memberid} /TR "node ${unbanpath} ${memberid}" /SD ${date.plus({days: config.bandays[res.value.count]}).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${date.plus({days: config.bandays[res.value.count]}).toFormat('HH\':\'mm')} /SC ONCE /F`);
-			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${date.plus({months: 2}).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${date.plus({months: 2}).toFormat('HH\':\'mm')} /SC ONCE /F`);
+			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${date.plus(config.banreset).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${date.plus({months: 2}).toFormat('HH\':\'mm')} /SC ONCE /F`);
 		} else {
 			exec(`schtasks /Delete /TN bansreset\\${memberid} /F`);
 		}
