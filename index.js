@@ -26,18 +26,19 @@ client.on('message', message => {
 
 	const args = message.content.slice(config.prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();
-
 	
 	if (command === 'help') {
-		const helprembed = new Discord.RichEmbed()
-			.setTitle('Ayuda')
-			.setColor('BLUE')
-			.addField(`${config.prefix}help`, 'Muestra este mensaje.')
-			.setFooter('Hecho con ♥ por Allavaz.');
-		client.commands.map((item) => { 
-			helprembed.addField(`${config.prefix + item.name} ${item.usage}`, item.description);
-		});
-		message.channel.send(helprembed);
+		if (message.channel.id === config.botschannelid || message.channel.id === config.channelid) {
+			const helprembed = new Discord.RichEmbed()
+				.setTitle('Ayuda')
+				.setColor('BLUE')
+				.addField(`${config.prefix}help`, 'Muestra este mensaje.')
+				.setFooter('Hecho con ♥ por Allavaz.');
+			client.commands.map((item) => { 
+				helprembed.addField(`${config.prefix + item.name} ${item.usage}`, item.description);
+			});
+			message.channel.send(helprembed);
+		}
 	}
 	
 	if (message.channel.id === config.botschannelid) {
