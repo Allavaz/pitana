@@ -28,7 +28,7 @@ client.on('message', message => {
 	const command = args.shift().toLowerCase();
 
 	if (message.channel.id === config.botschannelid) {
-		if (command !== 'baninfo' && command !== 'help') return;
+		if (command !== 'baninfo' && command !== 'help' && command !== 'banranking') return;
 		if (command === 'baninfo') client.commands.get('baninfo').execute(message, args);
 		if (command === 'banranking') client.commands.get('banranking').execute(message);
 	}
