@@ -29,14 +29,16 @@ client.on('message', message => {
 	
 	if (command === 'help') {
 		if (message.channel.id === config.botschannelid || message.channel.id === config.channelid) {
+			let msg = `**${config.prefix}help**\nMuestra este mensaje.\n\n`;
+			client.commands.map((item) => { 
+				msg = msg + `**${config.prefix + item.name} ${item.usage}**\n${item.description}\n\n`;
+			});
 			const helprembed = new Discord.RichEmbed()
 				.setTitle('Ayuda')
 				.setColor('BLUE')
-				.addField(`${config.prefix}help`, 'Muestra este mensaje.')
-				.setFooter('Hecho con ♥ por Allavaz.');
-			client.commands.map((item) => { 
-				helprembed.addField(`${config.prefix + item.name} ${item.usage}`, item.description);
-			});
+				.setFooter('Hecho con ♥ por Allavaz.')
+				.setDescription(msg)
+				.setThumbnail(client.user.displayAvatarURL);
 			message.channel.send(helprembed);
 		}
 	}
