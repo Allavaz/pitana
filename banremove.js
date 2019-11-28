@@ -40,7 +40,7 @@ module.exports = async function(message, member) {
 		if (banlistitem.value.count === 0) {
 			exec(`schtasks /Delete /TN bansreset\\${memberid} /F`);
 		} else {
-			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${DateTime.fromISO(lastbanlog.startdate).plus(config.banreset).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${DateTime.fromISO(lastbanlog.startdate).plus(config.banreset).toFormat('HH\':\'mm')} /SC ONCE /F`);
+			exec(`schtasks /Create /TN bansreset\\${memberid} /TR "node ${banresetpath} ${memberid}" /SD ${DateTime.fromISO(lastbanlog.startdate).plus({days: config.banreset[banlistitem.count]}).toFormat('LL\'/\'dd\'/\'yyyy')} /ST ${DateTime.fromISO(lastbanlog.startdate).plus({days: config.banreset[banlistitem.count]}).toFormat('HH\':\'mm')} /SC ONCE /F`);
 		}
 		const removebanrembed = new Discord.RichEmbed()
 			.setTitle('Ban removido')
