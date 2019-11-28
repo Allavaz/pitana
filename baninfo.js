@@ -11,7 +11,6 @@ module.exports = async function(message, member) {
 	let msg = await message.channel.send('Conectando a la base de datos...');
 	const memberid = member.id.toString();
 	const client = new MongoClient(url, {useNewUrlParser: true});
-
 	try {
 		let mongoclient = await client.connect();
 		const db = mongoclient.db(config.dbname);
@@ -40,12 +39,15 @@ module.exports = async function(message, member) {
 				baninforembed.setDescription(`${member} se encuentra **baneado indefinidamente** del matchmaking.`);
 			}
 			baninforembed.addField('Nivel de ban actual:', banlistitem.count);
-			const banresetdate = DateTime.fromISO(banlogitem.startdate).plus({days: config.banreset[banlistitem.count]}).toFormat('dd\'/\'LL\'/\'yyyy HH\':\'mm');
-			baninforembed.addField('Fecha de reseteo de nivel de ban:', banresetdate);
-			baninforembed.addField('Tiempo restante para el reseteo de nivel de ban:', calculatetime(banresetdate));
 		} else {
 			baninforembed.setDescription(`${member} **no** se encuentra baneado del matchmaking.`)
 				.addField('Nivel de ban actual:', banlistitem.count);
+		}
+		if (banlistitem.count > 0) {
+			const banresetdate = DateTime.fromISO(banlistitem.lastban).plus({days: config.banreset[banlistitem.count]}).toFormat('dd\'/\'LL\'/\'yyyy HH\':\'mm');
+			baninforembed.addField('Fecha de reseteo de nivel de ban:', banresetdate);
+			const remainingbanreset = Interval.fromDateTimes(now, DateTime.fromISO(banlistitem.lastban).plus({days: config.banreset[banlistitem.count]})).toDuration(['days', 'hours', 'minutes']).toObject();
+			baninforembed.addField('Tiempo restante para el reseteo de nivel de ban:', calculatetime(remainingbanreset));
 		}
 		msg.delete();
 		message.channel.send(baninforembed);
