@@ -27,12 +27,7 @@ client.on('message', message => {
 	const args = message.content.slice(config.prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();
 
-	if (message.channel.id === config.botschannelid) {
-		if (!config.freecommands.includes(command)) return;
-		if (command === 'baninfo') client.commands.get('baninfo').execute(message, args);
-		if (command === 'banranking') client.commands.get('banranking').execute(message);
-	}
-
+	
 	if (command === 'help') {
 		const helprembed = new Discord.RichEmbed()
 			.setTitle('Ayuda')
@@ -43,6 +38,11 @@ client.on('message', message => {
 			helprembed.addField(`${config.prefix + item.name} ${item.usage}`, item.description);
 		});
 		message.channel.send(helprembed);
+	}
+	
+	if (message.channel.id === config.botschannelid) {
+		if (!config.freecommands.includes(command)) return;
+		else client.commands.get(command).execute(message, args);
 	}
 
 	if (!client.commands.has(command)) return;
