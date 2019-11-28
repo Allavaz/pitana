@@ -40,7 +40,7 @@ module.exports = async function(message, member) {
 				baninforembed.setDescription(`${member} se encuentra **baneado indefinidamente** del matchmaking.`);
 			}
 			baninforembed.addField('Nivel de ban actual:', banlistitem.count);
-			const banresetdate = DateTime.fromISO(banlogitem.startdate).plus({days: config.banreset[banlistitem.count]});
+			const banresetdate = DateTime.fromISO(banlogitem.startdate).plus({days: config.banreset[banlistitem.count]}).toFormat('dd\'/\'LL\'/\'yyyy HH\':\'mm');
 			baninforembed.addField('Fecha de reseteo de nivel de ban:', banresetdate);
 			baninforembed.addField('Tiempo restante para el reseteo de nivel de ban:', calculatetime(banresetdate));
 		} else {
