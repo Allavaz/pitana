@@ -56,6 +56,8 @@ module.exports = async function(message, member, reason){
 			.addField('Motivo de ban:', reason)
 			.addField('Nivel de ban actual:', res.value.count)
 			.setFooter('Baneado por: ' + message.member.displayName, message.author.displayAvatarURL);
+		const banresetdate = DateTime.fromISO(date).plus({days: config.banreset[res.value.count]}).toFormat('dd\'/\'LL\'/\'yyyy HH\':\'mm');
+		banrembed.addField('Fecha de reseteo de nivel de ban:', banresetdate);
 		msg.delete();
 		message.channel.send(banrembed);
 	} catch(e) {
