@@ -21,11 +21,11 @@ module.exports = async function(message, member) {
 		const db = mongoclient.db(config.dbname);
 		msg.edit('Eliminando ban del historial...');
 		await db.collection('banlog').findOneAndDelete(
-			{}, 
+			{playerid: memberid}, 
 			{sort: {startdate: -1}}
 		);
 		let lastbanlog = await db.collection('banlog').findOne(
-			{}, 
+			{playerid: memberid}, 
 			{sort: {startdate: -1}}
 		);
 		let banlistitem = await db.collection('banlist').findOneAndUpdate(
