@@ -9,8 +9,7 @@ const path = require('path');
 const { exec } = require('child_process');
 
 module.exports = async function(message, member, reason){
-	let msg = await message.channel.send('Añadiendo rol de ban...');
-	member.addRole(config.mmbanroleid, reason);
+	let msg = await message.channel.send('Conectando a la base de datos...');
 	let date = DateTime
 		.local()
 		.setZone('America/Buenos_Aires')
@@ -21,7 +20,6 @@ module.exports = async function(message, member, reason){
 	const client = new MongoClient(url, {useNewUrlParser: true});
 
 	try {
-		msg.edit('Conectando con la base de datos...');
 		let mongoclient = await client.connect();
 		const db = mongoclient.db(config.dbname);
 		msg.edit('Incrementando nivel de ban...');
@@ -46,6 +44,8 @@ module.exports = async function(message, member, reason){
 			enddate: res.value.count < 7 ? date.plus({days: config.bandays[res.value.count]}).toISO() : null,
 			reason: reason
 		});
+		msg.edit('Añadiendo rol de ban...');
+		await member.addRole(config.mmbanroleid, reason);
 		const banrembed = new Discord.RichEmbed()
 			.setTitle(`Usuario baneado ${res.value.count < 7 ? `por ${config.bandays[res.value.count]} día${res.value.count > 2 ? 's' : ''}` : 'indefinidamente'}.`)
 			.setColor('RED')
