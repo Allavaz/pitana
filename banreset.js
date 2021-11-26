@@ -1,7 +1,7 @@
-const config = require('./config.json');
-const Discord = require('discord.js');
-const { DateTime } = require('luxon');
-const { MongoClient } = require('mongodb');
+const config = require("./config.json");
+const Discord = require("discord.js");
+const { DateTime } = require("luxon");
+const { MongoClient } = require("mongodb");
 const encuser = encodeURIComponent(config.dbusername);
 const encpw = encodeURIComponent(config.dbpassword);
 const url = `mongodb://${encuser}:${encpw}@${config.dbhostname}:27017/?authMecanism=DEFAULT`;
@@ -9,34 +9,48 @@ const url = `mongodb://${encuser}:${encpw}@${config.dbhostname}:27017/?authMecan
 const discordclient = new Discord.Client();
 const memberid = process.argv[2];
 
-discordclient.on('ready', () => {
-	const mongoclient = new MongoClient(url, {useNewUrlParser: true});
+discordclient.on("ready", () => {
+	const mongoclient = new MongoClient(url, { useNewUrlParser: true });
 	const guild = discordclient.guilds.get(config.guildid);
 	guild.fetchMembers().then(() => {
 		const member = guild.members.get(memberid);
 		console.log(`Reseteando nivel de ban de ${member.displayName}...`);
 		const channel = guild.channels.get(config.channelid);
-		console.log('Conectando a la base de datos...');
+		console.log("Conectando a la base de datos...");
 		mongoclient.connect((err, client) => {
 			const db = client.db(config.dbname);
-			db.collection('banlist').findOneAndUpdate({_id: memberid}, {$set: {count: 0}}, {returnOriginal: false})
-				.then((res) => {
-					console.log('Nivel de ban reseteado!');
+			db.collection("banlist")
+				.findOneAndUpdate(
+					{ _id: memberid },
+					{ $set: { count: 0 } },
+					{ returnOriginal: false }
+				)
+				.then(res => {
+					console.log("Nivel de ban reseteado!");
 					const resetrembed = new Discord.RichEmbed()
-						.setTitle('Ban reset')
+						.setTitle("Ban reset")
 						.setThumbnail(member.user.displayAvatarURL)
-						.setColor('BLUE')
-						.setDescription(`El nivel de ban de ${member} ha sido reseteado a 0.`)
-						.addField('Fecha del último ban:', DateTime.fromISO(res.value.lastban).toFormat('dd\'/\'LL\'/\'yyyy HH\':\'mm'));
-					channel.send(resetrembed)
+						.setColor("BLUE")
+						.setDescription(
+							`El nivel de ban de ${member} ha sido reseteado a 0.`
+						)
+						.addField(
+							"Fecha del último ban:",
+							DateTime.fromISO(res.value.lastban).toFormat(
+								"dd'/'LL'/'yyyy HH':'mm"
+							)
+						);
+					channel
+						.send(resetrembed)
 						.then(() => {
-							discordclient.destroy()
+							discordclient
+								.destroy()
 								.then(() => process.exit())
-								.catch((e) => console.error(e));
+								.catch(e => console.error(e));
 						})
-						.catch((e) => console.error(e));
+						.catch(e => console.error(e));
 				})
-				.catch((e) => console.error(e));
+				.catch(e => console.error(e));
 		});
 	});
 });

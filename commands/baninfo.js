@@ -1,10 +1,10 @@
-const config = require('../config.json');
-const baninfo = require('../baninfo');
+const config = require("../config.json");
+const baninfo = require("../baninfo");
 
 module.exports = {
-	name: 'baninfo',
-	description: 'Informa sobre la situación de un usuario.',
-	usage: '<@usuario>',
+	name: "baninfo",
+	description: "Informa sobre la situación de un usuario.",
+	usage: "<@usuario>",
 	execute(message, args) {
 		if (args.length > 0) {
 			message.guild.fetchMembers().then(() => {
@@ -12,7 +12,9 @@ module.exports = {
 				if (member !== undefined) {
 					baninfo(message, member);
 				} else {
-					message.reply(`usuario desconocido. Recordá mencionarlo! Uso: ${config.prefix}${this.name} ${this.usage}`);
+					message.reply(
+						`usuario desconocido. Recordá mencionarlo! Uso: ${config.prefix}${this.name} ${this.usage}`
+					);
 				}
 			});
 		} else {
