@@ -55,6 +55,7 @@ const url = `mongodb://${encuser}:${encpw}@${config.dbhostname}:27017/?authMecan
 		if (newTasks.length) {
 			await db.collection("unbantasks").insertMany(newTasks);
 		}
+		console.log("You can now CTRL-C");
 	} catch (error) {
 		console.error(error);
 	}
