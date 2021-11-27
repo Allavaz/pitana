@@ -6,6 +6,5 @@ Uses:
 
 - Node.js
 - Discord.js
-- MongoDB, for storing ban logs
-- Windows Task Scheduler, for when bans expire
+- MongoDB, for storing ban logs, and auto unban tasks
 - and Luxon, to work with dates and durations

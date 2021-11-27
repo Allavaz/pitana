@@ -1,78 +1,66 @@
-const fs = require("fs");
-const Discord = require("discord.js");
+const { Client, Collection, Intents } = require("discord.js");
 const config = require("./config.json");
+const fs = require("fs");
+const client = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS]
+});
+const checkTasks = require("./lib/checkTasks");
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
-client.adminroles = new Discord.Collection();
+client.once("ready", () => {
+	console.log("Ready!");
 
+	checkTasks(client);
+	setInterval(() => {
+		checkTasks(client);
+	}, 60000);
+});
+
+client.commands = new Collection();
 const commandFiles = fs
 	.readdirSync("./commands")
 	.filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
+	client.commands.set(command.data.name, command);
 }
 
-client.once("ready", () => {
-	console.log("Ready!");
+client.on("interactionCreate", async interaction => {
+	if (!interaction.isCommand()) return;
 
-	for (let role of config.adminroles) {
-		client.adminroles.set(
-			role,
-			client.guilds.get(config.guildid).roles.get(role)
-		);
-	}
-});
+	const command = client.commands.get(interaction.commandName);
 
-client.on("message", message => {
-	if (!message.content.startsWith(config.prefix) || message.author.bot) return;
-
-	const args = message.content.slice(config.prefix.length).split(/ +/);
-	const command = args.shift().toLowerCase();
-
-	if (command === "help") {
-		if (
-			message.channel.id === config.botschannelid ||
-			message.channel.id === config.channelid
-		) {
-			let msg = `**${config.prefix}help**\nMuestra este mensaje.\n\n`;
-			client.commands.map(item => {
-				msg =
-					msg +
-					`**${config.prefix + item.name} ${item.usage}**\n${
-						item.description
-					}\n\n`;
-			});
-			const helprembed = new Discord.RichEmbed()
-				.setTitle("Ayuda")
-				.setColor("BLUE")
-				.setFooter("Hecho con ♥ por Allavaz.")
-				.setDescription(msg)
-				.setThumbnail(client.user.displayAvatarURL);
-			message.channel.send(helprembed);
-		}
-	}
-
-	if (message.channel.id === config.botschannelid) {
-		if (!config.freecommands.includes(command)) return;
-		else client.commands.get(command).execute(message, args);
-	}
-
-	if (!client.commands.has(command)) return;
-	if (message.channel.id !== config.channelid) return;
+	if (!command) return;
 
 	try {
-		for (let role of client.adminroles) {
-			if (message.member.roles.has(role[0])) {
-				client.commands.get(command).execute(message, args);
-				break;
+		if (command.permissions) {
+			if (
+				!interaction.member.roles.cache.some(v =>
+					command.permissions.includes(v.id)
+				)
+			) {
+				return interaction.reply({
+					content:
+						"Este comando sólo puede ser utilizado por Árbitros y Staffs.",
+					ephemeral: true
+				});
 			}
 		}
-	} catch (e) {
-		console.error(e);
-		message.reply("me rompí. Avisale a Allavaz!");
+		if (command.channels) {
+			if (!command.channels.includes(interaction.channel.id)) {
+				return interaction.reply({
+					content: "Este comando no se puede usar en este canal.",
+					ephemeral: true
+				});
+			}
+		}
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		await interaction.reply({
+			content: "Ocurrió un error. Avisale a Allavaz!",
+			ephemeral: true
+		});
 	}
 });
 
