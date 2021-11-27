@@ -47,9 +47,7 @@ const url = `mongodb://${encuser}:${encpw}@${config.dbhostname}:27017/?authMecan
 			if (!oldTasks.find(e2 => e2.playerid === e._id)) {
 				newTasks.push({
 					playerid: e._id,
-					startdate: e.startdate,
-					enddate: e.enddate,
-					reason: e.reason
+					date: e.enddate
 				});
 			}
 		});
