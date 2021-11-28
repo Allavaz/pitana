@@ -1,4 +1,4 @@
-const baninfo = require("../lib/banInfo");
+const banInfo = require("../lib/banInfo");
 const config = require("../config.json");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
@@ -16,13 +16,13 @@ module.exports = {
 	async execute(interaction) {
 		if (!interaction.options.getUser("jugador")) {
 			try {
-				await baninfo(interaction, interaction.user);
+				await banInfo(interaction, interaction.member);
 			} catch (e) {
 				throw new Error(e);
 			}
 		} else {
 			try {
-				await baninfo(interaction, interaction.options.getUser("jugador"));
+				await banInfo(interaction, interaction.options.getMember("jugador"));
 			} catch (e) {
 				throw new Error(e);
 			}

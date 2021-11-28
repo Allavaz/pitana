@@ -16,10 +16,9 @@ module.exports = {
 	channels: [config.channelid],
 	async execute(interaction) {
 		try {
-			const userId = interaction.options.getUser("jugador").id.toString();
-			const member = await interaction.guild.members.fetch(userId);
+			const member = interaction.options.getMember("jugador");
 			if (member.roles.cache.get(config.mmbanroleid)) {
-				await banRemove(interaction, interaction.options.getUser("jugador"));
+				await banRemove(interaction, member);
 			} else {
 				interaction.reply({
 					content: "El jugador no se encuentra baneado actualmente.",

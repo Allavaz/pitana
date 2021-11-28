@@ -27,8 +27,7 @@ module.exports = {
 	permissions: config.adminroles,
 	channels: [config.channelid],
 	async execute(interaction) {
-		const userId = interaction.options.getUser("jugador").id.toString();
-		const member = await interaction.guild.members.fetch(userId);
+		const member = interaction.options.getMember("jugador");
 		if (member.roles.cache.get(config.mmbanroleid)) {
 			interaction.reply({
 				content: "El jugador ya se encuentra baneado.",
@@ -82,7 +81,7 @@ module.exports = {
 				} else {
 					await ban(
 						interaction,
-						interaction.options.getUser("jugador"),
+						member,
 						interaction.options.getString("motivo"),
 						durationObject
 					);
@@ -90,7 +89,7 @@ module.exports = {
 			} else {
 				await ban(
 					interaction,
-					interaction.options.getUser("jugador"),
+					member,
 					interaction.options.getString("motivo")
 				);
 			}
