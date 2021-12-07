@@ -12,7 +12,7 @@ client.once("ready", () => {
 	checkTasks(client);
 	setInterval(() => {
 		checkTasks(client);
-	}, 60000);
+	}, 600000);
 });
 
 client.commands = new Collection();
