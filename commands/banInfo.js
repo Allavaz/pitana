@@ -17,14 +17,14 @@ module.exports = {
 		if (!interaction.options.getUser("jugador")) {
 			try {
 				await banInfo(interaction, interaction.member);
-			} catch (e) {
-				throw new Error(e);
+			} catch (error) {
+				throw new Error(error);
 			}
 		} else {
 			try {
 				await banInfo(interaction, interaction.options.getMember("jugador"));
-			} catch (e) {
-				throw new Error(e);
+			} catch (error) {
+				throw new Error(error);
 			}
 		}
 	}
