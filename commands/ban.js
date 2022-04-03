@@ -1,4 +1,4 @@
-const config = require("../config.json");
+require("dotenv").config();
 const ban = require("../lib/ban");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
@@ -33,15 +33,15 @@ module.exports = {
 				.addChoice("días", "d")
 				.addChoice("permanente", "perma")
 		),
-	permissions: config.adminroles,
-	channels: [config.channelid],
+	permissions: JSON.parse(process.env.ADMIN_ROLES),
+	channels: [process.env.CHANNEL_ID],
 	async execute(interaction) {
 		try {
 			const member = interaction.options.getMember("jugador");
 			const tipo = interaction.options.getString("tipo");
 			const cantidad = interaction.options.getInteger("cantidad");
 			const motivo = interaction.options.getString("motivo");
-			if (member.roles.cache.get(config.mmbanroleid)) {
+			if (member.roles.cache.get(process.env.MM_BAN_ROLE_ID)) {
 				interaction.reply({
 					content: "El jugador ya se encuentra baneado.",
 					ephemeral: true

@@ -1,4 +1,4 @@
-const config = require("../config.json");
+require("dotenv").config();
 const banRemove = require("../lib/banRemove");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
@@ -12,12 +12,12 @@ module.exports = {
 				.setDescription("Jugador al que se desea desbanear")
 				.setRequired(true)
 		),
-	permissions: config.adminroles,
-	channels: [config.channelid],
+	permissions: JSON.parse(process.env.ADMIN_ROLES),
+	channels: [process.env.CHANNEL_ID],
 	async execute(interaction) {
 		try {
 			const member = interaction.options.getMember("jugador");
-			if (member.roles.cache.get(config.mmbanroleid)) {
+			if (member.roles.cache.get(process.env.MM_BAN_ROLE_ID)) {
 				await banRemove(interaction, member);
 			} else {
 				interaction.reply({

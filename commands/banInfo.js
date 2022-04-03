@@ -1,5 +1,5 @@
+require("dotenv").config();
 const banInfo = require("../lib/banInfo");
-const config = require("../config.json");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
 				.setDescription("Jugador al que se desea saber su situación")
 				.setRequired(false)
 		),
-	channels: [config.channelid, config.botschannelid],
+	channels: [process.env.CHANNEL_ID, process.env.BOTS_CHANNEL_ID],
 	async execute(interaction) {
 		if (!interaction.options.getUser("jugador")) {
 			try {

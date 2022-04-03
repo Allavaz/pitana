@@ -2,7 +2,7 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const { token } = require("./config.json");
 const fs = require("fs");
-const config = require("./config.json");
+require("dotenv").config();
 
 const commands = [];
 const commandFiles = fs
@@ -23,7 +23,10 @@ const rest = new REST({ version: "9" }).setToken(token);
 		console.log("Started refreshing application (/) commands.");
 
 		await rest.put(
-			Routes.applicationGuildCommands(config.clientid, config.guildid),
+			Routes.applicationGuildCommands(
+				process.env.CLIENT_ID,
+				process.env.GUILD_ID
+			),
 			{ body: commands }
 		);
 
