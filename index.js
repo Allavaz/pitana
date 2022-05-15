@@ -1,6 +1,8 @@
 const { Client, Collection, Intents } = require("discord.js");
 require("dotenv").config();
 const fs = require("fs");
+const { Settings } = require("luxon");
+Settings.defaultZone = "America/Argentina/Buenos_Aires";
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS]
 });
