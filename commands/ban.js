@@ -26,12 +26,13 @@ module.exports = {
 			option
 				.setName("tipo")
 				.setDescription(
-					"Tiempo personalizado: días, minutos, horas o permanente"
+					"Tiempo personalizado: días, minutos, horas, permanente o doble"
 				)
 				.addChoice("minutos", "m")
 				.addChoice("horas", "h")
 				.addChoice("días", "d")
 				.addChoice("permanente", "perma")
+				.addChoice("doble", "doble")
 		),
 	permissions: JSON.parse(process.env.ADMIN_ROLES),
 	channels: [process.env.CHANNEL_ID],
@@ -51,8 +52,10 @@ module.exports = {
 					let durationObject;
 					switch (tipo) {
 						case "perma":
+						case "doble":
 							return interaction.reply({
-								content: "No ingrese cantidad si ya eligió ban permanente.",
+								content:
+									"No ingrese cantidad si ya eligió ban permanente o doble.",
 								ephemeral: true
 							});
 						case "m":
@@ -90,6 +93,9 @@ module.exports = {
 				} else if (tipo && !cantidad) {
 					if (tipo === "perma") {
 						let durationObject = "perma";
+						await ban(interaction, member, motivo, durationObject);
+					} else if (tipo === "doble") {
+						let durationObject = "doble";
 						await ban(interaction, member, motivo, durationObject);
 					} else {
 						return interaction.reply({
