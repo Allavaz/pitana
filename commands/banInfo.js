@@ -12,7 +12,11 @@ module.exports = {
 				.setDescription("Jugador al que se desea saber su situación")
 				.setRequired(false)
 		),
-	channels: [process.env.CHANNEL_ID, process.env.BOTS_CHANNEL_ID],
+	channels: [
+		process.env.CHANNEL_ID,
+		process.env.BOTS_CHANNEL_ID,
+		process.env.ARBITRAJE_CHANNEL_ID
+	],
 	async execute(interaction) {
 		if (!interaction.options.getUser("jugador")) {
 			try {
