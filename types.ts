@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
 export type UnbanTask = {
-	_id: ObjectId;
+	_id?: ObjectId;
 	playerid: string;
 	date: string;
 };
