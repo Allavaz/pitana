@@ -26,7 +26,7 @@ export default async function ban(
 		const client = await clientPromise;
 		const db = client.db();
 		const lastBan = (await db
-			.collection("banlog")
+			.collection(process.env.BAN_LOG_COLLECTION as string)
 			.findOne(
 				{ playerid: userId },
 				{ sort: { startdate: -1 } }
@@ -47,7 +47,7 @@ export default async function ban(
 			endDateISO = endDate.toISO();
 			endDateString = endDate.toFormat(dateFormat);
 		}
-		await db.collection("banlog").insertOne({
+		await db.collection(process.env.BAN_LOG_COLLECTION as string).insertOne({
 			playerid: userId,
 			startdate: date.toISO(),
 			enddate: endDateISO,
@@ -57,10 +57,12 @@ export default async function ban(
 		});
 		await member.roles.add(process.env.MM_BAN_ROLE_ID as string, reason);
 		if (banLevel < 7 && customTime !== "perma") {
-			await db.collection("unbantasks").insertOne({
-				playerid: userId,
-				date: endDateISO
-			});
+			await db
+				.collection(process.env.UNBAN_TASKS_COLLECTION as string)
+				.insertOne({
+					playerid: userId,
+					date: endDateISO
+				});
 		}
 		const banEmbed = new EmbedBuilder()
 			.setTitle(
@@ -130,9 +132,11 @@ export default async function ban(
 		const client = await clientPromise;
 		const db = client.db();
 		await db
-			.collection("banlog")
+			.collection(process.env.BANLOG_COLLECTION as string)
 			.findOneAndDelete({ playerid: userId, startdate: date.toISO() });
-		await db.collection("unbantasks").findOneAndDelete({ playerid: userId });
+		await db
+			.collection(process.env.UNBAN_TASKS_COLLECTION as string)
+			.findOneAndDelete({ playerid: userId });
 		throw new Error(error);
 	}
 }

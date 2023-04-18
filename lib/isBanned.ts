@@ -7,7 +7,7 @@ export default async function isBanned(member: GuildMember) {
 		const client = await clientPromise;
 		const db = client.db();
 		const tasks = (await db
-			.collection("unbantasks")
+			.collection(process.env.UNBAN_TASKS_COLLECTION as string)
 			.find({ playerid: member.id })
 			.toArray()) as UnbanTask[];
 		return tasks.length > 0;

@@ -20,11 +20,13 @@ export default async function banRemove(
 		const client = await clientPromise;
 		const db = client.db();
 		await db
-			.collection("banlog")
+			.collection(process.env.BANLOG_COLLECTION as string)
 			.findOneAndDelete({ playerid: userId }, { sort: { startdate: -1 } });
-		await db.collection("unbantasks").findOneAndDelete({ playerid: userId });
+		await db
+			.collection(process.env.UNBAN_TASKS_COLLECTION as string)
+			.findOneAndDelete({ playerid: userId });
 		const lastBan = (await db
-			.collection("banlog")
+			.collection(process.env.BANLOG_COLLECTION as string)
 			.findOne(
 				{ playerid: userId },
 				{ sort: { startdate: -1 } }
