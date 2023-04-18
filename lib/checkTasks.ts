@@ -1,4 +1,3 @@
-require("dotenv").config();
 import autoUnban from "./autoUnban";
 import { DateTime } from "luxon";
 import clientPromise from "./mongodb";
