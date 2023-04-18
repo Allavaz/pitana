@@ -16,7 +16,7 @@ export default async function checkTasks(dsClient: Client): Promise<void> {
 			const date = DateTime.fromISO(v.date);
 			const now = DateTime.local().startOf("minute");
 			if (date <= now) {
-				autoUnban(v, dsClient).finally(() =>
+				autoUnban(v, dsClient).then(() =>
 					db
 						.collection(process.env.UNBAN_TASKS_COLLECTION as string)
 						.deleteOne(v)

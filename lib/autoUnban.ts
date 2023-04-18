@@ -31,6 +31,8 @@ export default async function autoUnban(task: UnbanTask, client: Client) {
 
 		await channel!.send({ embeds: [unbanEmbed] });
 	} catch (error) {
-		throw new Error(`No se encontró al jugador ${task.playerid}.`);
+		console.log(
+			`Se intentó desbanear al jugador ${task.playerid}, pero no se encuentra en el servidor.`
+		);
 	}
 }
