@@ -1,9 +1,12 @@
-const { MessageEmbed } = require("discord.js");
-require("dotenv").config();
-const clientPromise = require("./mongodb");
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import * as dotenv from "dotenv";
+dotenv.config();
+import clientPromise from "./mongodb";
 
-module.exports = async function (interaction) {
-	const members = await interaction.guild.members.fetch();
+export default async function banRanking(
+	interaction: ChatInputCommandInteraction
+) {
+	const members = await interaction.guild!.members.fetch();
 	try {
 		const client = await clientPromise;
 		const db = client.db();
@@ -31,7 +34,7 @@ module.exports = async function (interaction) {
 		for (let i = 0; i < docs.length; i++) {
 			let name;
 			try {
-				name = await members.get(docs[i]._id).displayName;
+				name = members.get(docs[i]._id)!.displayName;
 			} catch (e) {
 				name = null;
 			}
@@ -40,12 +43,12 @@ module.exports = async function (interaction) {
 			}
 		}
 		let list = "";
-		const banRankingEmbed = new MessageEmbed()
+		const banRankingEmbed = new EmbedBuilder()
 			.setTitle("Ranking de baneados")
-			.setColor("BLUE");
+			.setColor("Blue");
 		try {
 			banRankingEmbed.setThumbnail(
-				members.get(docs[0]._id).user.displayAvatarURL()
+				members.get(docs[0]._id)!.user.displayAvatarURL()
 			);
 		} catch (err) {
 			console.log("banRanking: Hay jugadores que no se pudieron encontrar");
@@ -55,8 +58,8 @@ module.exports = async function (interaction) {
 		}
 		banRankingEmbed.setDescription(list);
 		interaction.reply({ embeds: [banRankingEmbed] });
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error);
 		throw new Error(error);
 	}
-};
+}

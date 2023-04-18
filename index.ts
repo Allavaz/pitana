@@ -1,13 +1,27 @@
-const { Client, Collection, Intents } = require("discord.js");
-require("dotenv").config();
-const fs = require("fs");
-const { Settings } = require("luxon");
+import {
+	Client,
+	Collection,
+	GatewayIntentBits,
+	GuildMember,
+	Interaction,
+	InteractionReplyOptions
+} from "discord.js";
+import * as dotenv from "dotenv";
+dotenv.config();
+import fs from "fs";
+import { Settings } from "luxon";
+import checkTasks from "./lib/checkTasks";
+
 Settings.defaultZone = "America/Argentina/Buenos_Aires";
 Settings.defaultLocale = "es";
+
+interface ClientWithCommands<_> extends Client<boolean> {
+	commands: Collection<string, any>;
+}
+
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS]
-});
-const checkTasks = require("./lib/checkTasks");
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers]
+}) as ClientWithCommands<boolean>;
 
 client.once("ready", () => {
 	console.log("Ready!");
@@ -21,14 +35,14 @@ client.once("ready", () => {
 client.commands = new Collection();
 const commandFiles = fs
 	.readdirSync("./commands")
-	.filter(file => file.endsWith(".js"));
+	.filter(file => file.endsWith(".ts"));
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.data.name, command);
 }
 
-client.on("interactionCreate", async interaction => {
+client.on("interactionCreate", async (interaction: Interaction) => {
 	if (!interaction.isCommand()) return;
 
 	const command = client.commands.get(interaction.commandName);
@@ -38,8 +52,8 @@ client.on("interactionCreate", async interaction => {
 	try {
 		if (command.permissions) {
 			if (
-				!interaction.member.roles.cache.some(v =>
-					command.permissions.includes(v.id)
+				!(interaction.member as GuildMember).roles.cache.some(r =>
+					command.permissions.includes(r.id)
 				)
 			) {
 				return interaction.reply({
@@ -50,17 +64,17 @@ client.on("interactionCreate", async interaction => {
 			}
 		}
 		if (command.channels) {
-			if (!command.channels.includes(interaction.channel.id)) {
+			if (!command.channels.includes(interaction.channel!.id)) {
 				return interaction.reply({
 					content: "Este comando no se puede usar en este canal.",
 					ephemeral: true
 				});
 			}
 		}
-		await command.execute(interaction);
+		return await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		await interaction.reply({
+		return interaction.reply({
 			content: "Ocurrió un error. Avisale a Allavaz!",
 			ephemeral: true
 		});

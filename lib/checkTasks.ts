@@ -1,15 +1,20 @@
 require("dotenv").config();
-const autoUnban = require("./autoUnban");
-const { DateTime } = require("luxon");
-const clientPromise = require("./mongodb");
+import autoUnban from "./autoUnban";
+import { DateTime } from "luxon";
+import clientPromise from "./mongodb";
+import { Client } from "discord.js";
+import { UnbanTask } from "../types";
 
 const postponeDuration = { minutes: 10 };
 
-module.exports = async dsClient => {
+export default async function checkTasks(dsClient: Client): Promise<void> {
 	try {
 		const client = await clientPromise;
 		const db = client.db();
-		const tasks = await db.collection("unbantasks").find({}).toArray();
+		const tasks = (await db
+			.collection("unbantasks")
+			.find({})
+			.toArray()) as UnbanTask[];
 		tasks.forEach(v => {
 			const date = DateTime.fromISO(v.date);
 			const now = DateTime.local().startOf("minute");
@@ -18,9 +23,9 @@ module.exports = async dsClient => {
 					.then(() => {
 						db.collection("unbantasks").deleteOne(v);
 					})
-					.catch(error => {
+					.catch((error: any) => {
 						console.error(error);
-						newDate = date.plus(postponeDuration).toISO();
+						const newDate = date.plus(postponeDuration).toISO();
 						db.collection("unbantasks").updateOne(
 							{ playerid: v.playerid },
 							{ $set: { date: newDate } }
@@ -31,4 +36,4 @@ module.exports = async dsClient => {
 	} catch (error) {
 		console.error(error);
 	}
-};
+}

@@ -1,6 +1,6 @@
-const clientPromise = require("./mongodb");
+import clientPromise from "./mongodb";
 
-module.exports = async userId => {
+export default async function getLastBan(userId: string): Promise<any> {
 	try {
 		const client = await clientPromise;
 		const db = client.db();
@@ -8,8 +8,8 @@ module.exports = async userId => {
 			.collection("banlog")
 			.findOne({ playerid: userId }, { sort: { startdate: -1 } });
 		return lastBan;
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error);
 		throw new Error(error);
 	}
-};
+}
