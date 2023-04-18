@@ -3,14 +3,14 @@ import {
 	Collection,
 	GatewayIntentBits,
 	GuildMember,
-	Interaction,
-	InteractionReplyOptions
+	Interaction
 } from "discord.js";
 import * as dotenv from "dotenv";
-dotenv.config();
 import fs from "fs";
 import { Settings } from "luxon";
 import checkTasks from "./lib/checkTasks";
+import isBanned from "./lib/isBanned";
+dotenv.config();
 
 Settings.defaultZone = "America/Argentina/Buenos_Aires";
 Settings.defaultLocale = "es";
@@ -78,6 +78,12 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 			content: "Ocurrió un error. Avisale a Allavaz!",
 			ephemeral: true
 		});
+	}
+});
+
+client.on("guildMemberAdd", async (member: GuildMember) => {
+	if (await isBanned(member)) {
+		await member.roles.add(process.env.MM_BAN_ROLE_ID as string);
 	}
 });
 
