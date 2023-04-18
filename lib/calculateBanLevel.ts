@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 import { BanLogItem } from "../types";
 dotenv.config();
-const { DateTime } = require("luxon");
+import { DateTime } from "luxon";
 
 export default function calculateBanLevel(lastBan: BanLogItem) {
 	if (!lastBan) return 0;
