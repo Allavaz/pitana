@@ -132,7 +132,7 @@ export default async function ban(
 		const client = await clientPromise;
 		const db = client.db();
 		await db
-			.collection(process.env.BANLOG_COLLECTION as string)
+			.collection(process.env.BAN_LOG_COLLECTION as string)
 			.findOneAndDelete({ playerid: userId, startdate: date.toISO() });
 		await db
 			.collection(process.env.UNBAN_TASKS_COLLECTION as string)

@@ -11,7 +11,7 @@ export default async function banRanking(
 		const client = await clientPromise;
 		const db = client.db();
 		let docs = await db
-			.collection(process.env.BANLOG_COLLECTION as string)
+			.collection(process.env.BAN_LOG_COLLECTION as string)
 			.aggregate([
 				{
 					$group: {
