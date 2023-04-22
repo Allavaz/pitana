@@ -1,4 +1,6 @@
 import clientPromise from "./mongodb";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export default async function getLastBan(userId: string): Promise<any> {
 	try {

@@ -3,6 +3,8 @@ import { DateTime } from "luxon";
 import clientPromise from "./mongodb";
 import { Client } from "discord.js";
 import { UnbanTask } from "../types";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export default async function checkTasks(dsClient: Client): Promise<void> {
 	try {

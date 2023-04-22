@@ -1,6 +1,8 @@
 import { GuildMember } from "discord.js";
 import clientPromise from "./mongodb";
 import { UnbanTask } from "../types";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export default async function isBanned(member: GuildMember) {
 	try {
