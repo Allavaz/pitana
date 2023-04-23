@@ -1,5 +1,4 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+import environment from "../environment";
 import {
 	ChatInputCommandInteraction,
 	GuildMember,
@@ -26,7 +25,7 @@ export default async function ban(
 		const client = await clientPromise;
 		const db = client.db();
 		const lastBan = (await db
-			.collection(process.env.BAN_LOG_COLLECTION as string)
+			.collection(environment.banLogCollection)
 			.findOne(
 				{ playerid: userId },
 				{ sort: { startdate: -1 } }
@@ -39,7 +38,7 @@ export default async function ban(
 				: date.plus(
 						customTime && customTime !== "doble"
 							? customTime
-							: { days: JSON.parse(process.env.BAN_DAYS as string)[banLevel] }
+							: { days: environment.banDays[banLevel] }
 				  );
 		let endDateISO = null;
 		let endDateString = null;
@@ -47,7 +46,7 @@ export default async function ban(
 			endDateISO = endDate.toISO();
 			endDateString = endDate.toFormat(dateFormat);
 		}
-		await db.collection(process.env.BAN_LOG_COLLECTION as string).insertOne({
+		await db.collection(environment.banLogCollection).insertOne({
 			playerid: userId,
 			startdate: date.toISO(),
 			enddate: endDateISO,
@@ -55,14 +54,12 @@ export default async function ban(
 			banlevel: banLevel,
 			bannedby: interaction.user.id
 		});
-		await member.roles.add(process.env.MM_BAN_ROLE_ID as string, reason);
+		await member.roles.add(environment.mmBanRoleId, reason);
 		if (banLevel < 7 && customTime !== "perma") {
-			await db
-				.collection(process.env.UNBAN_TASKS_COLLECTION as string)
-				.insertOne({
-					playerid: userId,
-					date: endDateISO
-				});
+			await db.collection(environment.unbanTasksCollection).insertOne({
+				playerid: userId,
+				date: endDateISO
+			});
 		}
 		const banEmbed = new EmbedBuilder()
 			.setTitle(
@@ -74,9 +71,9 @@ export default async function ban(
 					  }`
 					: `Usuario baneado ${
 							banLevel < 7
-								? `por ${
-										JSON.parse(process.env.BAN_DAYS as string)[banLevel]
-								  } día${banLevel > 2 ? "s" : ""}`
+								? `por ${environment.banDays[banLevel]} día${
+										banLevel > 2 ? "s" : ""
+								  }`
 								: "indefinidamente"
 					  }.`
 			)
@@ -107,7 +104,7 @@ export default async function ban(
 			);
 		if (endDate) {
 			const banResetDate = endDate
-				.plus({ days: JSON.parse(process.env.RESET_DAYS as string)[banLevel] })
+				.plus({ days: environment.resetDays[banLevel] })
 				.toFormat(dateFormat);
 			banEmbed.addFields({
 				name: "Fecha de reseteo de nivel de ban:",
@@ -123,19 +120,19 @@ export default async function ban(
 			}`
 		});
 		const arbitrajeChannel = (await interaction.client.channels.fetch(
-			process.env.ARBITRAJE_CHANNEL_ID as string
+			environment.arbitrajeChannelId
 		)) as TextChannel;
 		await arbitrajeChannel.send({ embeds: [banEmbed] });
 	} catch (error: any) {
 		console.error(error);
-		await member.roles.remove(process.env.MM_BAN_ROLE_ID as string, "rollback");
+		await member.roles.remove(environment.mmBanRoleId, "rollback");
 		const client = await clientPromise;
 		const db = client.db();
 		await db
-			.collection(process.env.BAN_LOG_COLLECTION as string)
+			.collection(environment.banLogCollection)
 			.findOneAndDelete({ playerid: userId, startdate: date.toISO() });
 		await db
-			.collection(process.env.UNBAN_TASKS_COLLECTION as string)
+			.collection(environment.unbanTasksCollection)
 			.findOneAndDelete({ playerid: userId });
 		throw new Error(error);
 	}

@@ -1,10 +1,9 @@
-import * as dotenv from "dotenv";
-dotenv.config();
 import { MongoClient } from "mongodb";
+import environment from "../environment";
 
-const encuser = encodeURIComponent(process.env.DB_USERNAME as string);
-const encpw = encodeURIComponent(process.env.DB_PASSWORD as string);
-const uri = `mongodb+srv://${encuser}:${encpw}@${process.env.DB_HOSTNAME}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const encuser = encodeURIComponent(environment.dbUsername);
+const encpw = encodeURIComponent(environment.dbPassword);
+const uri = `mongodb+srv://${encuser}:${encpw}@${environment.dbHostname}/${environment.dbName}?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri);
 const clientPromise = client.connect();

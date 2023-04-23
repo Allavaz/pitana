@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
-import * as dotenv from "dotenv";
-dotenv.config();
 import clientPromise from "./mongodb";
+import environment from "../environment";
 
 export default async function banRanking(
 	interaction: ChatInputCommandInteraction
@@ -11,7 +10,7 @@ export default async function banRanking(
 		const client = await clientPromise;
 		const db = client.db();
 		let docs = await db
-			.collection(process.env.BAN_LOG_COLLECTION as string)
+			.collection(environment.banLogCollection)
 			.aggregate([
 				{
 					$group: {

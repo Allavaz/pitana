@@ -1,6 +1,7 @@
 import clientPromise from "./lib/mongodb";
 import { DateTime } from "luxon";
 import { UnbanTask } from "./types";
+import environment from "./environment";
 
 (async () => {
 	const date = DateTime.local()
@@ -10,7 +11,7 @@ import { UnbanTask } from "./types";
 		const client = await clientPromise;
 		const db = client.db();
 		let docs = await db
-			.collection(process.env.BAN_LOG_COLLECTION as string)
+			.collection(environment.banLogCollection)
 			.aggregate([
 				{
 					$group: {
@@ -34,7 +35,7 @@ import { UnbanTask } from "./types";
 			])
 			.toArray();
 		let oldTasks = await db
-			.collection(process.env.UNBAN_TASKS_COLLECTION as string)
+			.collection(environment.unbanTasksCollection)
 			.find({})
 			.toArray();
 		let newTasks: UnbanTask[] = [];
@@ -50,7 +51,7 @@ import { UnbanTask } from "./types";
 		console.log(newTasks);
 		if (newTasks.length) {
 			await db
-				.collection(process.env.UNBAN_TASKS_COLLECTION as string)
+				.collection(environment.unbanTasksCollection)
 				.insertMany(newTasks);
 		}
 		console.log("You can now CTRL-C");

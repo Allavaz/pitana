@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, GuildMember } from "discord.js";
-import * as dotenv from "dotenv";
 import ban from "../lib/ban";
-dotenv.config();
+import environment from "../environment";
 
 export const data = new SlashCommandBuilder()
 	.setName("ban")
@@ -35,15 +34,17 @@ export const data = new SlashCommandBuilder()
 			.addChoice("permanente", "perma")
 			.addChoice("doble", "doble")
 	);
-export const permissions = JSON.parse(process.env.ADMIN_ROLES as string);
-export const channels = [process.env.CHANNEL_ID];
+
+export const permissions = environment.adminRoles;
+export const channels = [environment.channelId];
+
 export async function execute(interaction: ChatInputCommandInteraction) {
 	try {
 		const member = interaction.options.getMember("jugador") as GuildMember;
 		const tipo = interaction.options.getString("tipo");
 		const cantidad = interaction.options.getInteger("cantidad");
 		const motivo = interaction.options.getString("motivo");
-		if (member!.roles.cache.get(process.env.MM_BAN_ROLE_ID as string)) {
+		if (member!.roles.cache.get(environment.mmBanRoleId)) {
 			interaction.reply({
 				content: "El jugador ya se encuentra baneado.",
 				ephemeral: true

@@ -1,22 +1,21 @@
 import { Client, EmbedBuilder, TextChannel } from "discord.js";
-import * as dotenv from "dotenv";
-dotenv.config();
 import calculateBanLevel from "./calculateBanLevel";
 import getLastBan from "./getLastBan";
 import { UnbanTask } from "../types";
+import environment from "../environment";
 
 export default async function autoUnban(task: UnbanTask, client: Client) {
 	try {
-		const guild = await client.guilds.fetch(process.env.GUILD_ID as string);
+		const guild = await client.guilds.fetch(environment.guildId);
 		const member = await guild.members.fetch(task.playerid);
 		const lastBan = await getLastBan(task.playerid);
 		const banLevel = calculateBanLevel(lastBan);
 		const channel = (await guild.channels.fetch(
-			process.env.CHANNEL_ID as string
+			environment.channelId
 		)) as TextChannel;
 
 		await member.roles.remove(
-			process.env.MM_BAN_ROLE_ID as string,
+			environment.mmBanRoleId,
 			"Pitana: Expiración de ban"
 		);
 

@@ -4,11 +4,10 @@ import {
 	EmbedBuilder,
 	TextChannel
 } from "discord.js";
-import * as dotenv from "dotenv";
-dotenv.config();
 import calculateBanLevel from "./calculateBanLevel";
 import clientPromise from "./mongodb";
 import { BanLogItem } from "../types";
+import environment from "../environment";
 
 export default async function banRemove(
 	interaction: ChatInputCommandInteraction,
@@ -20,19 +19,19 @@ export default async function banRemove(
 		const client = await clientPromise;
 		const db = client.db();
 		await db
-			.collection(process.env.BAN_LOG_COLLECTION as string)
+			.collection(environment.banLogCollection)
 			.findOneAndDelete({ playerid: userId }, { sort: { startdate: -1 } });
 		await db
-			.collection(process.env.UNBAN_TASKS_COLLECTION as string)
+			.collection(environment.unbanTasksCollection)
 			.findOneAndDelete({ playerid: userId });
 		const lastBan = (await db
-			.collection(process.env.BAN_LOG_COLLECTION as string)
+			.collection(environment.banLogCollection)
 			.findOne(
 				{ playerid: userId },
 				{ sort: { startdate: -1 } }
 			)) as BanLogItem;
 		const banLevel = calculateBanLevel(lastBan);
-		await member.roles.remove(process.env.MM_BAN_ROLE_ID as string);
+		await member.roles.remove(environment.mmBanRoleId);
 		const removeBanEmbed = new EmbedBuilder()
 			.setTitle("Ban removido")
 			.setColor("Green")
@@ -50,11 +49,11 @@ export default async function banRemove(
 			} / ${interaction.member!}`
 		});
 		const arbitrajeChannel = (await interaction.client.channels.fetch(
-			process.env.ARBITRAJE_CHANNEL_ID as string
+			environment.arbitrajeChannelId
 		)) as TextChannel;
 		await arbitrajeChannel.send({ embeds: [removeBanEmbed] });
 	} catch (error: any) {
-		await member.roles.add(process.env.MM_BAN_ROLE_ID as string);
+		await member.roles.add(environment.mmBanRoleId);
 		throw new Error(error);
 	}
 }

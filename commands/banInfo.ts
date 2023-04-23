@@ -1,8 +1,7 @@
-import * as dotenv from "dotenv";
-dotenv.config();
 import banInfo from "../lib/banInfo";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import environment from "../environment";
 
 export const data = new SlashCommandBuilder()
 	.setName("baninfo")
@@ -14,9 +13,9 @@ export const data = new SlashCommandBuilder()
 			.setRequired(false)
 	);
 export const channels = [
-	process.env.CHANNEL_ID,
-	process.env.BOTS_CHANNEL_ID,
-	process.env.ARBITRAJE_CHANNEL_ID
+	environment.channelId,
+	environment.botsChannelId,
+	environment.arbitrajeChannelId
 ];
 export async function execute(interaction: ChatInputCommandInteraction) {
 	if (!interaction.options.getUser("jugador")) {

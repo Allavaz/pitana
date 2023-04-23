@@ -5,12 +5,11 @@ import {
 	GuildMember,
 	Interaction
 } from "discord.js";
-import * as dotenv from "dotenv";
 import fs from "fs";
 import { Settings } from "luxon";
 import checkTasks from "./lib/checkTasks";
 import isBanned from "./lib/isBanned";
-dotenv.config();
+import environment from "./environment";
 
 Settings.defaultZone = "America/Argentina/Buenos_Aires";
 Settings.defaultLocale = "es";
@@ -83,8 +82,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
 client.on("guildMemberAdd", async (member: GuildMember) => {
 	if (await isBanned(member)) {
-		await member.roles.add(process.env.MM_BAN_ROLE_ID as string);
+		await member.roles.add(environment.mmBanRoleId);
 	}
 });
 
-client.login(process.env.TOKEN);
+client.login(environment.token);

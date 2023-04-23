@@ -6,7 +6,7 @@
 	"bin": "index.js",
 	"scripts": {
 		"start": "ts-node index.ts",
-		"start:prod": "ts-node -r dotenv/config index.ts dotenv_config_path=.env.prod",
+		"start:prod": "ENV=prod ts-node index.ts",
 		"dev": "nodemon src -e ts,json --exec 'ts-node index.ts'",
 		"deploy-commands": "ts-node deploy-commands.ts"
 	},

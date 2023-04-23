@@ -1,8 +1,7 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
-import * as dotenv from "dotenv";
 import { readdirSync } from "fs";
-dotenv.config();
+import environment from "./environment";
 
 const commands = [];
 const commandFiles = readdirSync("./commands").filter(file =>
@@ -16,7 +15,7 @@ for (const file of commandFiles) {
 	}
 }
 
-const rest = new REST({ version: "9" }).setToken(process.env.TOKEN as string);
+const rest = new REST({ version: "9" }).setToken(environment.token);
 
 (async () => {
 	try {
@@ -24,8 +23,8 @@ const rest = new REST({ version: "9" }).setToken(process.env.TOKEN as string);
 
 		await rest.put(
 			Routes.applicationGuildCommands(
-				process.env.CLIENT_ID as string,
-				process.env.GUILD_ID as string
+				environment.clientId,
+				environment.guildId
 			),
 			{ body: commands }
 		);

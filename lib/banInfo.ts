@@ -1,5 +1,4 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+import environment from "../environment";
 import {
 	ChatInputCommandInteraction,
 	GuildMember,
@@ -41,7 +40,7 @@ const getInfoFromLastBan = (lastBan: BanLogItem) => {
 		: null;
 	const banLevel = calculateBanLevel(lastBan);
 	const resetDate = DateTime.fromISO(lastBan.enddate).plus({
-		days: JSON.parse(process.env.RESET_DAYS as string)[banLevel]
+		days: environment.resetDays[banLevel]
 	});
 	const remainingReset = durationAutoUnits(now, resetDate);
 	const toHumanOpts = { maximumFractionDigits: 0 };
@@ -71,7 +70,7 @@ export default async function banInfo(
 		const client = await clientPromise;
 		const db = client.db();
 		const lastBan = (await db
-			.collection(process.env.BAN_LOG_COLLECTION as string)
+			.collection(environment.banLogCollection)
 			.findOne(
 				{ playerid: userId },
 				{ sort: { startdate: -1 } }
@@ -104,7 +103,7 @@ export default async function banInfo(
 				);
 			}
 			if (
-				interaction.channelId === process.env.ARBITRAJE_CHANNEL_ID &&
+				interaction.channelId === environment.arbitrajeChannelId &&
 				lastBan.bannedby
 			) {
 				const bannedBy = await interaction.guild!.members.fetch(
