@@ -24,11 +24,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd C:\Users\Administrador\pitana\
+            cd ${{PATH}}
             git pull
-            Stop-Service -Name "pitana"
             npm ci
-            Start-Service -Name "pitana"
+            systemctl restart pitana
           debug: true
       - if: steps.changes-package-json.outputs.any_changed == 'false'
         uses: appleboy/ssh-action@master
@@ -37,8 +36,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd C:\Users\Administrador\pitana\
+            cd ${{PATH}}
             git pull
-            Stop-Service -Name "pitana"
-            Start-Service -Name "pitana"
+            systemctl restart pitana
           debug: true
