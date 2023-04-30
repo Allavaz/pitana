@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd ${{PATH}}
+            cd ${{secrets.PATH}}
             git pull
             npm ci
             systemctl restart pitana
@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd ${{PATH}}
+            cd ${{secrets.PATH}}
             git pull
             systemctl restart pitana
           debug: true
