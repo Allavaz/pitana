@@ -3,7 +3,7 @@ import environment from "../environment";
 
 const encuser = encodeURIComponent(environment.dbUsername);
 const encpw = encodeURIComponent(environment.dbPassword);
-const uri = `mongodb+srv://${encuser}:${encpw}@${environment.dbHostname}/${environment.dbName}?retryWrites=true&w=majority`;
+const uri = `mongodb://${encuser}:${encpw}@${environment.dbHostname}/${environment.dbName}?authSource=admin&retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri);
 const clientPromise = client.connect();
