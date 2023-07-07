@@ -44,7 +44,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 		const tipo = interaction.options.getString("tipo");
 		const cantidad = interaction.options.getInteger("cantidad");
 		const motivo = interaction.options.getString("motivo");
-		if (member!.roles.cache.get(environment.mmBanRoleId)) {
+		if (!member) {
+			return interaction.reply({
+				content: "El jugador no se encuentra en el servidor.",
+				ephemeral: true
+			});
+		}
+		if (member.roles.cache.get(environment.mmBanRoleId)) {
 			interaction.reply({
 				content: "El jugador ya se encuentra baneado.",
 				ephemeral: true
@@ -113,6 +119,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 			}
 		}
 	} catch (error: any) {
+		console.error(`Error baneando al usuario ${interaction.user.tag}`);
 		console.error(error);
 		throw new Error(error);
 	}

@@ -19,6 +19,12 @@ export const channels = [environment.channelId];
 export async function execute(interaction: ChatInputCommandInteraction) {
 	try {
 		const member = interaction.options.getMember("jugador") as GuildMember;
+		if (!member) {
+			return interaction.reply({
+				content: "El jugador no se encuentra en el servidor.",
+				ephemeral: true
+			});
+		}
 		if (member.roles.cache.get(environment.mmBanRoleId)) {
 			await banRemove(interaction, member);
 		} else {
