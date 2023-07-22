@@ -2,9 +2,9 @@ import environment from "../environment";
 import { BanLogItem } from "../types";
 import { DateTime } from "luxon";
 
-export default function calculateBanLevel(lastBan: BanLogItem) {
+export default function calculateBanLevel(lastBan: BanLogItem | null) {
 	if (!lastBan) return 0;
-	if (lastBan && !lastBan.enddate) return 7;
+	if (!lastBan.enddate) return 7;
 	const resetDate = DateTime.fromISO(lastBan.enddate).plus({
 		days: environment.resetDays[lastBan.banlevel]
 	});

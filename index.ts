@@ -1,4 +1,5 @@
 import {
+	ChatInputCommandInteraction,
 	Client,
 	Collection,
 	GatewayIntentBits,
@@ -10,6 +11,7 @@ import { Settings } from "luxon";
 import checkTasks from "./lib/checkTasks";
 import isBanned from "./lib/isBanned";
 import environment from "./environment";
+import logCommand from "./lib/logCommand";
 
 Settings.defaultZone = "America/Argentina/Buenos_Aires";
 Settings.defaultLocale = "es";
@@ -47,6 +49,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 	const command = client.commands.get(interaction.commandName);
 
 	if (!command) return;
+
+	logCommand(interaction as ChatInputCommandInteraction);
 
 	try {
 		if (command.permissions) {

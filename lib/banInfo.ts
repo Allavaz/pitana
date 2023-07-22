@@ -6,8 +6,8 @@ import {
 } from "discord.js";
 import { DateTime, Interval, Duration, DateInput } from "luxon";
 import calculateBanLevel from "./calculateBanLevel";
-import clientPromise from "./mongodb";
 import { BanLogItem } from "../types";
+import getLastBan from "./getLastBan";
 
 const dateFormat = "dd'/'LL'/'yyyy HH':'mm";
 
@@ -24,28 +24,21 @@ const removeZero = (item: any) =>
 		.reduce((newObj, key) => Object.assign(newObj, { [key]: item[key] }), {});
 
 const getInfoFromLastBan = (lastBan: BanLogItem) => {
-	if (!lastBan)
-		return {
-			isBanned: false,
-			banLevel: 0
-		};
 	const now = DateTime.local();
 	const start = DateTime.fromISO(lastBan.startdate);
-	const end = DateTime.fromISO(lastBan.enddate);
-	const initialDuration = lastBan.enddate
-		? durationAutoUnits(start, end)
-		: null;
-	const remainingDuration = lastBan.enddate
-		? durationAutoUnits(now, end)
-		: null;
+	const end = lastBan.enddate ? DateTime.fromISO(lastBan.enddate) : null;
+	const initialDuration = end ? durationAutoUnits(start, end) : null;
+	const remainingDuration = end ? durationAutoUnits(now, end) : null;
 	const banLevel = calculateBanLevel(lastBan);
-	const resetDate = DateTime.fromISO(lastBan.enddate).plus({
-		days: environment.resetDays[banLevel]
-	});
-	const remainingReset = durationAutoUnits(now, resetDate);
+	const resetDate = end
+		? DateTime.fromISO(lastBan.enddate).plus({
+				days: environment.resetDays[banLevel]
+		  })
+		: null;
+	const remainingReset = resetDate ? durationAutoUnits(now, resetDate) : null;
 	const toHumanOpts = { maximumFractionDigits: 0 };
 	return {
-		isBanned: now <= end || end === null,
+		isBanned: end === null || now <= end,
 		startDate: start.toFormat(dateFormat),
 		endDate: end ? end.toFormat(dateFormat) : null,
 		initialDuration: initialDuration
@@ -55,8 +48,10 @@ const getInfoFromLastBan = (lastBan: BanLogItem) => {
 			? Duration.fromObject(remainingDuration).toHuman(toHumanOpts)
 			: null,
 		banLevel: banLevel,
-		resetDate: resetDate.toFormat(dateFormat),
-		remainingReset: Duration.fromObject(remainingReset).toHuman(toHumanOpts)
+		resetDate: resetDate ? resetDate.toFormat(dateFormat) : null,
+		remainingReset: remainingReset
+			? Duration.fromObject(remainingReset).toHuman(toHumanOpts)
+			: null
 	};
 };
 
@@ -67,19 +62,22 @@ export default async function banInfo(
 	const userId = member.id;
 	try {
 		await interaction.deferReply({ ephemeral: true });
-		const client = await clientPromise;
-		const db = client.db();
-		const lastBan = (await db
-			.collection(environment.banLogCollection)
-			.findOne(
-				{ playerid: userId },
-				{ sort: { startdate: -1 } }
-			)) as BanLogItem;
-		const userInfo = getInfoFromLastBan(lastBan);
 		const banInfoEmbed = new EmbedBuilder()
 			.setTitle("Información de ban")
 			.setColor("Blue")
 			.setThumbnail(member.user.displayAvatarURL());
+		const lastBan = await getLastBan(userId);
+		if (!lastBan) {
+			banInfoEmbed.setDescription(
+				`${member.displayName} **no** se encuentra baneado del matchmaking.`
+			);
+			banInfoEmbed.addFields({
+				name: "Nivel de ban actual:",
+				value: "0"
+			});
+			return await interaction.editReply({ embeds: [banInfoEmbed] });
+		}
+		const userInfo = getInfoFromLastBan(lastBan);
 		if (userInfo.isBanned) {
 			banInfoEmbed.addFields({
 				name: "Motivo:",

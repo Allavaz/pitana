@@ -8,9 +8,27 @@ import {
 import { DateTime, Duration } from "luxon";
 import calculateBanLevel from "./calculateBanLevel";
 import clientPromise from "./mongodb";
-import { BanLogItem, CustomTime } from "../types";
+import { CustomTime } from "../types";
+import getLastBan from "./getLastBan";
 
 const dateFormat = "dd'/'LL'/'yyyy HH':'mm";
+
+function getEmbedTitle(banLevel: number, customTime?: CustomTime) {
+	if (banLevel === 7) {
+		return "**indefinidamente**";
+	}
+	if (customTime) {
+		if (customTime === "perma") {
+			return "**indefinidamente**";
+		}
+		if (customTime !== "doble") {
+			return `por ${Duration.fromObject(customTime).toHuman()}`;
+		}
+	}
+	return `por ${environment.banDays[banLevel]} día${
+		environment.banDays[banLevel] > 1 ? "s" : ""
+	}`;
+}
 
 export default async function ban(
 	interaction: ChatInputCommandInteraction,
@@ -24,12 +42,7 @@ export default async function ban(
 		await interaction.deferReply({ ephemeral: true });
 		const client = await clientPromise;
 		const db = client.db();
-		const lastBan = (await db
-			.collection(environment.banLogCollection)
-			.findOne(
-				{ playerid: userId },
-				{ sort: { startdate: -1 } }
-			)) as BanLogItem;
+		const lastBan = await getLastBan(userId);
 		const banLevel =
 			calculateBanLevel(lastBan) + (customTime === "doble" ? 2 : 1);
 		const endDate =
@@ -62,21 +75,7 @@ export default async function ban(
 			});
 		}
 		const banEmbed = new EmbedBuilder()
-			.setTitle(
-				customTime && customTime !== "doble"
-					? `Usuario baneado ${
-							customTime === "perma"
-								? "**indefinidamente**"
-								: `por ${Duration.fromObject(customTime).toHuman()}`
-					  }`
-					: `Usuario baneado ${
-							banLevel < 7
-								? `por ${environment.banDays[banLevel]} día${
-										banLevel > 2 ? "s" : ""
-								  }`
-								: "indefinidamente"
-					  }.`
-			)
+			.setTitle(`Usuario baneado ${getEmbedTitle(banLevel, customTime)}`)
 			.setColor("Red")
 			.setThumbnail(member.user.displayAvatarURL())
 			.addFields(

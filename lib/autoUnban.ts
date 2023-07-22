@@ -29,6 +29,9 @@ export default async function autoUnban(task: UnbanTask, client: Client) {
 			.addFields({ name: "Nivel de ban actual:", value: banLevel.toString() });
 
 		await channel!.send({ embeds: [unbanEmbed] });
+
+		const date = new Date().toISOString();
+		console.log(`[${date}] ${member.id} - Autounban`);
 	} catch (error) {
 		console.log(
 			`Se intentó desbanear al jugador ${task.playerid}, pero no se encuentra en el servidor.`
