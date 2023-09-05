@@ -19,7 +19,7 @@
 		"discord.js": "^14.9.0",
 		"dotenv": "^16.0.0",
 		"luxon": "^2.5.2",
-		"mongodb": "^5.2.0"
+		"mongodb": "^5.8.0"
 	},
 	"devDependencies": {
 		"@types/luxon": "^3.3.0",
