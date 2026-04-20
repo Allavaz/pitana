@@ -111,7 +111,7 @@ export default async function ban(
 			});
 		}
 		await interaction.editReply("Usuario baneado exitosamente.");
-		await interaction.channel!.send({ embeds: [banEmbed] });
+		await (interaction.channel as TextChannel).send({ embeds: [banEmbed] });
 		banEmbed.addFields({
 			name: "Baneado por:",
 			value: `${(interaction.member as GuildMember)!.displayName} / ${

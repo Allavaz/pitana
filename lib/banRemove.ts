@@ -41,7 +41,7 @@ export default async function banRemove(
 			)
 			.addFields({ name: "Nivel de ban actual:", value: banLevel.toString() });
 		await interaction.editReply("Usuario desbaneado exitosamente.");
-		await interaction.channel!.send({ embeds: [removeBanEmbed] });
+		await (interaction.channel as TextChannel).send({ embeds: [removeBanEmbed] });
 		removeBanEmbed.addFields({
 			name: "Ban removido por:",
 			value: `${
