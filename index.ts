@@ -7,6 +7,7 @@ import {
 	Interaction
 } from "discord.js";
 import fs from "fs";
+import path from "path";
 import { Settings } from "luxon";
 import checkTasks from "./lib/checkTasks";
 import isBanned from "./lib/isBanned";
@@ -35,11 +36,11 @@ client.once("ready", () => {
 
 client.commands = new Collection();
 const commandFiles = fs
-	.readdirSync("./commands")
-	.filter(file => file.endsWith(".ts"));
+	.readdirSync(path.join(__dirname, "commands"))
+	.filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+	const command = require(path.join(__dirname, "commands", file));
 	client.commands.set(command.data.name, command);
 }
 
