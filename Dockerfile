@@ -1,11 +1,15 @@
+FROM node:lts-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
 FROM node:lts-alpine
 WORKDIR /app
-
+ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
-
-COPY . .
-
-ENV NODE_ENV=production
+COPY --from=builder /app/dist ./dist
 USER node
-CMD ["node", "index.js"]
+CMD ["node", "dist/index.js"]
