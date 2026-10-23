@@ -1,0 +1,12 @@
+services:
+  bot:
+    image: ghcr.io/allavaz/pitana:latest # all lowercase
+    restart: unless-stopped
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # only if the bot uses Mongo
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
