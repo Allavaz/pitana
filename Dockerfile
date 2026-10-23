@@ -10,6 +10,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/build ./build
 USER node
-CMD ["node", "dist/index.js"]
+CMD ["node", "build/index.js"]
