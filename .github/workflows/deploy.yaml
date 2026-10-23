@@ -40,6 +40,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ~/pitana
-            docker compose pull app
+            docker compose pull bot
             docker compose up -d
             docker image prune -f
